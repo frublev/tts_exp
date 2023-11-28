@@ -1,0 +1,9 @@
+ipython
+omegaconf
+pydub
+PyYAML
+torch~=2.1.1
+torchaudio
+
+soundfile~=0.12.1
+playsound~=1.3.0
