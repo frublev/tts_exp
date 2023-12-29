@@ -5,8 +5,8 @@ import queue
 import json
 from datetime import datetime, timedelta
 
-from stt_config import VA_ALIAS, VA_CMD_LIST, VA_PARAM_CMD_LIST, VA_EXTRA_PARAM
-from commands import recognize_cmd, va_functions, extra_q_check
+from stt_config import VA_ALIAS, VA_CMD_LIST
+from commands import recognize_cmd, va_functions, va_speak
 
 
 model = vosk.Model(model_name="vosk-model-small-ru-0.22")
@@ -16,6 +16,7 @@ device = 1
 q = queue.Queue()
 none_stop = True
 any_q = False
+extra_params = ''
 
 
 def q_callback(indata, frames, time, status):
@@ -27,13 +28,23 @@ def q_callback(indata, frames, time, status):
 def stt(voice):
     global none_stop
     global any_q
+    global extra_params
     if any_q:
         if voice == '':
-            print('agagsdg')
-            any_q = extra_q_check()
+            print('waiting')
+            if datetime.now() >= any_q:
+                any_q = False
+                va_speak('olivia_cancel1')
         else:
             print(voice)
-        any_q = False
+            none_stop = VA_CMD_LIST[extra_params]['non-stop']
+            misunderstood = va_functions[extra_params](voice)
+            if misunderstood:
+                va_speak('olivia_misunderstood1')
+                any_q = datetime.now() + timedelta(seconds=7)
+            else:
+                extra_params = ''
+                any_q = False
     else:
         if voice.startswith(VA_ALIAS):
             print(voice)
@@ -44,14 +55,19 @@ def stt(voice):
             command = cmd_['cmd']
             print(f'команда: {command}')
             if command:
-                if VA_CMD_LIST[command]['params'] and VA_CMD_LIST[command]['extra']:
-                    any_q = datetime.now() + timedelta(seconds=5)
+                if VA_CMD_LIST[command]['extra']:
+                    print(VA_CMD_LIST[command]['extra'])
+                    va_speak(VA_CMD_LIST[command]['extra'])
+                    extra_params = command
+                    any_q = datetime.now() + timedelta(seconds=7)
                 elif VA_CMD_LIST[command]['params']:
+                    print(VA_CMD_LIST[command]['params'])
                     va_functions[command](VA_CMD_LIST[command]['params'])
                 else:
                     va_functions[command]()
                 none_stop = VA_CMD_LIST[command]['non-stop']
             else:
+                va_speak('olivia_repeat1')
                 none_stop = True
         elif voice == 'проверка':
             print(voice)
@@ -59,7 +75,6 @@ def stt(voice):
 
 
 def listen(callback):
-    global any_q
     with sd.RawInputStream(samplerate=samplerate, blocksize=8000, dtype='int16',
                            channels=1, callback=q_callback):
 
@@ -68,10 +83,6 @@ def listen(callback):
             data = q.get()
             if rec.AcceptWaveform(data):
                 callback(json.loads(rec.Result())["text"])
-            if any_q:
-                if datetime.now() < any_q:
-                    pass
-                    # print(any_q)
 
 
 if __name__ == '__main__':

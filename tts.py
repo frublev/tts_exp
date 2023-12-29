@@ -16,7 +16,8 @@ model.to(device)  # gpu or cpu
 ssml_sample = '''
               <speak>
               <p>
-                  <s>на сколько таймер ставим?</s>
+                  <s>не разобрала</s>
+                  <s>повтори параметры</s>
               </p>
               </speak>
               '''
@@ -46,4 +47,4 @@ def va_play(audio, sample_rate):
 
 
 if __name__ == '__main__':
-    speak(ssml_sample, True, 'voices/olivia_timer1')
+    speak(ssml_sample, True, 'voices/olivia_misunderstood1')

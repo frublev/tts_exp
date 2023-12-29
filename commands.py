@@ -1,9 +1,16 @@
+from time import sleep
+from threading import Thread
+
 from fuzzywuzzy import fuzz
 from datetime import datetime
 from num2words import num2words
 
 from recorder import file_to_play
 from tts import va_play, speak
+from text_to_numb import tex_to_num
+
+
+is_running = False
 
 
 def recognize_cmd(cmd, cmds):
@@ -43,22 +50,48 @@ def va_current_time():
     return True
 
 
-def weather_forecast_tod():
-    audio, sample_rate = file_to_play('../cash/olivia_forecast_tod')
-    va_play(audio, sample_rate)
-    return True
+def timer(sec):
+    global is_running
+    va_speak('olivia_timer_on1')
+    s = sec
+    while is_running and s > 0:
+        print(s)
+        print(is_running)
+        sleep(1)
+        s -= 1
+    is_running = False
+    if s == 0:
+        va_speak('olivia_timer_end1')
 
 
-def weather_forecast_tom():
-    audio, sample_rate = file_to_play('../cash/olivia_forecast_tom')
-    va_play(audio, sample_rate)
-    return True
-
-
-def extra_q_check():
-    audio, sample_rate = file_to_play('olivia_cancel1')
-    va_play(audio, sample_rate)
-    return False
+def start_timer(t_):
+    global is_running
+    if t_ == 'ноль ноль ноль':
+        is_running = False
+        va_speak('olivia_timer_off1')
+        return False
+    else:
+        h_m_s = tex_to_num(t_)
+        if h_m_s:
+            print(h_m_s)
+            seconds = 0
+            for k, v in h_m_s.items():
+                if k == 'h':
+                    seconds += v * 3600
+                elif k == 'm':
+                    seconds += v * 60
+                elif k == 's':
+                    seconds += v
+            if seconds > 0:
+                is_running = True
+                timer_thread = Thread(target=timer, args=(seconds,), daemon=True)
+                timer_thread.start()
+            else:
+                is_running = False
+                va_speak('olivia_timer_off1')
+            return False
+        else:
+            return True
 
 
 va_functions = {
@@ -66,5 +99,11 @@ va_functions = {
     'ctime': va_current_time,
     'weather_forecast_tod': va_speak,
     'weather_forecast_tom': va_speak,
-    'timer': va_speak,
+    'timer': start_timer,
+    'stop_timer': start_timer,
 }
+
+
+if __name__ == '__main__':
+    t = 'тридцать одна секунда'
+    start_timer(t)
