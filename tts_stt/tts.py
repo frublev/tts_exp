@@ -1,7 +1,7 @@
 import torch
 import sounddevice as sd
 
-from recorder import record
+from tts_stt.recorder import record
 
 language = 'ru'
 model_id = 'v4_ru'

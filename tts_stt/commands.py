@@ -5,9 +5,11 @@ from fuzzywuzzy import fuzz
 from datetime import datetime
 from num2words import num2words
 
-from recorder import file_to_play
-from tts import va_play, speak
+from tts_stt.recorder import file_to_play
+from tts_stt.tts import va_play, speak
 from text_to_numb import tex_to_num
+
+from global_var import settings
 
 
 is_running = False
@@ -53,6 +55,7 @@ def va_current_time():
 def timer(sec):
     global is_running
     va_speak('olivia_timer_on1')
+    settings.charts['timer'] = sec
     s = sec
     while is_running and s > 0:
         print(s)
@@ -61,13 +64,19 @@ def timer(sec):
         s -= 1
     is_running = False
     if s == 0:
+        settings.charts['timer'] = 0
         va_speak('olivia_timer_end1')
 
 
 def start_timer(t_):
     global is_running
+    is_running = False
+    settings.charts['timer'] = 0
+    print('dfgsdg', is_running)
+    sleep(1)
     if t_ == 'ноль ноль ноль':
         is_running = False
+        settings.charts['timer'] = 0
         va_speak('olivia_timer_off1')
         return False
     else:
@@ -102,8 +111,3 @@ va_functions = {
     'timer': start_timer,
     'stop_timer': start_timer,
 }
-
-
-if __name__ == '__main__':
-    t = 'тридцать одна секунда'
-    start_timer(t)

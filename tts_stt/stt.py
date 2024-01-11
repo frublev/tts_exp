@@ -5,8 +5,8 @@ import queue
 import json
 from datetime import datetime, timedelta
 
-from stt_config import VA_ALIAS, VA_CMD_LIST
-from commands import recognize_cmd, va_functions, va_speak
+from tts_stt.stt_config import VA_ALIAS, VA_CMD_LIST
+from tts_stt.commands import recognize_cmd, va_functions, va_speak
 
 
 model = vosk.Model(model_name="vosk-model-small-ru-0.22")

@@ -1,11 +1,10 @@
 from datetime import datetime
 import json
-import time
 
 import requests
 from num2words import num2words
 
-from tts import speak
+from venv.tts import speak
 
 coord = {'latitude': 48.0353930, 'longitude': 17.2635956}
 

@@ -7,5 +7,5 @@ def record(data, samplerate, file_name):
 
 
 def file_to_play(file_name):
-    data, samplerate = sf.read(f'voices/{file_name}.wav')
+    data, samplerate = sf.read(f'tts_stt/voices/{file_name}.wav')
     return data, samplerate
