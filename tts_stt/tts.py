@@ -16,8 +16,8 @@ model.to(device)  # gpu or cpu
 ssml_sample = '''
               <speak>
               <p>
-                  <s>не разобрала</s>
-                  <s>повтори параметры</s>
+                  <s></s>
+                  <s></s>
               </p>
               </speak>
               '''

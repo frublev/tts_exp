@@ -6,8 +6,8 @@ from PyQt5.QtCore import QTimer, QDateTime, Qt
 from PyQt5.QtWidgets import QMessageBox, QWidget, QDialog, QDialogButtonBox, QVBoxLayout, QLabel, QTextBrowser, \
     QGridLayout
 
-from apps.shape.test2 import Ui_Form
-from apps.shape.day_dialog import Ui_Dialog
+from apps.forms.test2 import Ui_Form
+from apps.forms.day_dialog import Ui_Dialog
 from global_var import settings
 
 
@@ -48,7 +48,7 @@ class DayDialog(QDialog, Ui_Dialog):
             for n in enumerate(event):
                 btn = QDialogButtonBox.Ok
                 self.buttonBox = QDialogButtonBox(btn)
-                self.buttonBox.accepted.connect(self.event_handle())
+                self.buttonBox.accepted.connect(self.accept)
                 self.buttonBox.setCenterButtons(btn)
                 self.label = QLabel(n[1])
                 self.layout_grid.addWidget(self.label, n[0], 0, alignment=Qt.AlignLeft)
@@ -60,7 +60,6 @@ class DayDialog(QDialog, Ui_Dialog):
 
     def event_handle(self, n):
         pass
-
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_Form):
@@ -125,10 +124,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Form):
         else:
             our_week = 'Short week'
         our_day = our_day + ' / ' + our_week
-        dlg = DayDialog(self, ['number 1', 'number 2', 'number 3', 'number 4',
-                               'number 5', 'number 6', 'number 7'])
+        dlg = DayDialog(self, )
         dlg.show()
 
+
+# ['number 1', 'number 2', 'number 3', 'number 4', 'number 5', 'number 6', 'number 7']
 
 def start_gui():
     app = QtWidgets.QApplication(sys.argv)
